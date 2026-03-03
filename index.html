@@ -3,99 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logic Pro | Secure Login</title>
+    <title>Logic Pro | Login</title>
     <style>
         :root { --bg: #0f172a; --card: #1e293b; --primary: #3b82f6; --text: #f8fafc; --accent: #fbbf24; }
-        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        
-        .login-card { background: var(--card); padding: 40px; border-radius: 24px; width: 100%; max-width: 360px; border: 1px solid #334155; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); text-align: center; }
-        
-        .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); margin-bottom: 30px; letter-spacing: -1px; }
-        .logo span { color: var(--accent); }
-
-        .tabs { display: flex; margin-bottom: 25px; border-bottom: 1px solid #334155; }
-        .tab { flex: 1; padding: 10px; cursor: pointer; color: #64748b; font-size: 0.9rem; font-weight: 600; }
+        body { background: var(--bg); color: var(--text); font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .login-card { background: var(--card); padding: 30px; border-radius: 20px; width: 100%; max-width: 340px; border: 1px solid #334155; text-align: center; }
+        .tabs { display: flex; margin-bottom: 20px; border-bottom: 1px solid #334155; }
+        .tab { flex: 1; padding: 10px; cursor: pointer; color: #64748b; font-weight: bold; }
         .tab.active { color: var(--primary); border-bottom: 2px solid var(--primary); }
-
-        .input-group { text-align: left; margin-bottom: 20px; }
-        label { display: block; font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px; text-transform: uppercase; }
-        input { width: 100%; padding: 14px; background: #0f172a; border: 1px solid #334155; border-radius: 12px; color: white; box-sizing: border-box; font-size: 1rem; }
-        
-        .btn-action { width: 100%; padding: 16px; background: var(--primary); border: none; border-radius: 12px; color: white; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 10px; transition: 0.2s; }
-        .btn-action:hover { opacity: 0.9; transform: translateY(-1px); }
-
-        #status-msg { margin-top: 20px; font-size: 0.85rem; padding: 10px; border-radius: 8px; display: none; }
-        .msg-error { background: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2); }
-        .msg-wait { background: rgba(245, 158, 11, 0.1); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.2); }
+        input { width: 100%; padding: 12px; background: #0f172a; border: 1px solid #334155; border-radius: 10px; color: white; margin-bottom: 15px; box-sizing: border-box; }
+        .btn { width: 100%; padding: 14px; background: var(--primary); border: none; border-radius: 10px; color: white; font-weight: bold; cursor: pointer; }
+        #msg { margin-top: 15px; font-size: 0.8rem; color: var(--accent); display: none; }
     </style>
 </head>
 <body>
-
-<div class="login-card">
-    <div class="logo">LOGIC<span>PRO</span></div>
-    
-    <div class="tabs">
-        <div id="tab-login" class="tab active" onclick="switchTab('login')">SIGN IN</div>
-        <div id="tab-reg" class="tab" onclick="switchTab('reg')">REGISTER</div>
+    <div class="login-card">
+        <h2 style="color:var(--primary)">LOGIC<span style="color:var(--accent)">PRO</span></h2>
+        <div class="tabs">
+            <div id="tL" class="tab active" onclick="setMode('login')">LOGIN</div>
+            <div id="tR" class="tab" onclick="setMode('reg')">REGISTER</div>
+        </div>
+        <input type="text" id="user" placeholder="Username">
+        <input type="password" id="pass" placeholder="Password">
+        <button class="btn" onclick="handleAuth()">ENTER SYSTEM</button>
+        <div id="msg"></div>
     </div>
+    <script>
+        let mode = 'login';
+        function setMode(m) {
+            mode = m;
+            document.getElementById('tL').classList.toggle('active', m==='login');
+            document.getElementById('tR').classList.toggle('active', m==='reg');
+        }
+        function handleAuth() {
+            const u = document.getElementById('user').value;
+            const p = document.getElementById('pass').value;
+            const msg = document.getElementById('msg');
+            msg.style.display = 'block';
 
-    <form id="auth-form" onsubmit="handleAuth(event)">
-        <div class="input-group">
-            <label>Username</label>
-            <input type="text" id="username" required placeholder="Enter username">
-        </div>
-        <div class="input-group">
-            <label>Password</label>
-            <input type="password" id="password" required placeholder="••••••••">
-        </div>
-        <button type="submit" id="submit-btn" class="btn-action">SIGN IN</button>
-    </form>
-
-    <div id="status-msg"></div>
-</div>
-
-<script>
-    let currentMode = 'login';
-
-    function switchTab(mode) {
-        currentMode = mode;
-        document.getElementById('tab-login').classList.toggle('active', mode === 'login');
-        document.getElementById('tab-reg').classList.toggle('active', mode === 'reg');
-        document.getElementById('submit-btn').innerText = mode === 'login' ? 'SIGN IN' : 'CREATE ACCOUNT';
-        hideMsg();
-    }
-
-    function showMsg(text, type) {
-        const msg = document.getElementById('status-msg');
-        msg.innerText = text;
-        msg.className = type === 'error' ? 'msg-error' : 'msg-wait';
-        msg.style.display = 'block';
-    }
-
-    function hideMsg() { document.getElementById('status-msg').style.display = 'none'; }
-
-    function handleAuth(e) {
-        e.preventDefault();
-        const user = document.getElementById('username').value;
-        const pass = document.getElementById('password').value;
-
-        if (currentMode === 'reg') {
-            // SIMULATION: Save new user as "Pending Approval"
-            showMsg("Account created! Waiting for Admin approval.", "wait");
-        } else {
-            // SIMULATION: Check Login
-            if (user === "admin" && pass === "1234") {
-                window.location.href = "admin.html"; // Redirect to your admin dashboard
+            if(mode === 'reg') {
+                msg.innerText = "Registration Sent! Wait for Admin Approval.";
             } else {
-                // For regular customers, check if approved
-                showMsg("Checking approval status...", "wait");
-                setTimeout(() => {
-                    showMsg("Access Denied: Admin has not approved your account yet.", "error");
-                }, 1500);
+                if(u === 'admin' && p === '1234') {
+                    window.location.href = 'admin.html';
+                } else if (u && p) {
+                    msg.innerText = "Checking Approval Status...";
+                    setTimeout(() => { msg.innerText = "Error: Account not approved yet."; }, 1500);
+                }
             }
         }
-    }
-</script>
-
+    </script>
 </body>
 </html>

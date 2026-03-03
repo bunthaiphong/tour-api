@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logic Pro | Player</title>
+    <style>
+        /* Shared Styles from previous professional versions */
+        :root { --bg: #0f172a; --card: #1e293b; --primary: #3b82f6; --accent: #fbbf24; }
+        body { background: var(--bg); color: white; font-family: sans-serif; padding: 20px; }
+        .card { background: var(--card); padding: 20px; border-radius: 15px; margin-bottom: 15px; border: 1px solid #334155; }
+        #timer { font-size: 3rem; text-align: center; color: var(--accent); font-weight: bold; }
+        .hidden { display: none; }
+        input { width: 100%; padding: 12px; margin: 10px 0; background: #0f172a; color: white; border: 1px solid #475569; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h3>PLAYER WALLET: <span id="bal" style="color:var(--accent)">1,000.00</span></h3>
+    </div>
+
+    <div id="bet-form" class="card">
+        <label>Method Code (K1, C1, T1, 1>2)</label>
+        <input type="text" id="mCode" placeholder="Enter Code">
+        <label>Bet Amount</label>
+        <input type="number" id="mLuy" placeholder="0.00">
+        <button onclick="placeBet()" style="width:100%; padding:15px; background:var(--primary); color:white; border:none; border-radius:8px; font-weight:bold;">SUBMIT BET</button>
+    </div>
+
+    <div id="timer-box" class="card hidden">
+        <h4 style="text-align:center">ROUND IN PROGRESS</h4>
+        <div id="timer">10:00</div>
+    </div>
+
+    <script>
+        // Use the VBA Logic from the previous "Professional" code block provided earlier.
+        // This page listens for the Admin result.
+    </script>
+</body>
+</html>
