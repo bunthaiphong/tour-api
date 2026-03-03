@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Logic Pro | ADMIN</title>
+    <style>
+        body { background: #020617; color: white; font-family: sans-serif; padding: 20px; }
+        .panel { background: #1e293b; padding: 20px; border-radius: 15px; border: 1px solid #ef4444; margin-bottom: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .btn-res { padding: 20px; background: #334155; border: 1px solid #475569; color: white; font-size: 1.5rem; font-weight: bold; border-radius: 10px; cursor: pointer; }
+        .btn-res:active { background: #3b82f6; }
+        .lock { opacity: 0.3; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+    <h1>ADMIN CONTROL</h1>
+
+    <div class="panel">
+        <h3>1. USER APPROVALS</h3>
+        <div style="background:#0f172a; padding:10px; border-radius:8px; display:flex; justify-content:space-between;">
+            <span>NewPlayer_88</span>
+            <button onclick="this.innerText='Approved'; this.style.background='#10b981';" style="background:#3b82f6; color:white; border:none; padding:5px 10px; border-radius:5px;">Approve</button>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h3>2. SET OFFICIAL RESULT</h3>
+        <p id="timer" style="color: #fbbf24; text-align: center; font-size: 1.5rem;">WAITING FOR 10:00 LOCK...</p>
+        <div class="grid">
+            <button class="btn-res lock" id="r1" onclick="settle(1)">1</button>
+            <button class="btn-res lock" id="r2" onclick="settle(2)">2</button>
+            <button class="btn-res lock" id="r3" onclick="settle(3)">3</button>
+            <button class="btn-res lock" id="r4" onclick="settle(4)">4</button>
+        </div>
+    </div>
+
+    <script>
+        // Timer Logic to unlock buttons after 10 mins
+        let seconds = 600;
+        const count = setInterval(() => {
+            seconds--;
+            if(seconds <= 0) {
+                clearInterval(count);
+                document.getElementById('timer').innerText = "LOCK RELEASED - SET RESULT";
+                document.querySelectorAll('.btn-res').forEach(b => b.classList.remove('lock'));
+            } else {
+                let m = Math.floor(seconds/60); let s = seconds%60;
+                document.getElementById('timer').innerText = `LOCK ACTIVE: ${m}:${s<10?'0':''}${s}`;
+            }
+        }, 1000);
+
+        function settle(n) {
+            if(seconds > 0) return alert("Wait for the 10-minute timer!");
+            alert("Result " + n + " submitted to all players.");
+        }
+    </script>
+</body>
+</html>
