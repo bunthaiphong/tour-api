@@ -2,98 +2,98 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Logic Admin Console</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logic Pro | Secure Login</title>
     <style>
-        :root { --admin-red: #ef4444; --admin-green: #10b981; --dark: #0f172a; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--dark); color: white; padding: 20px; }
-        .grid { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; }
-        .panel { background: #1e293b; padding: 20px; border-radius: 12px; border: 1px solid #334155; }
+        :root { --bg: #0f172a; --card: #1e293b; --primary: #3b82f6; --text: #f8fafc; --accent: #fbbf24; }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
         
-        /* User Management */
-        .user-row { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #334155; }
-        .status-badge { padding: 2px 8px; border-radius: 4px; font-size: 10px; }
-        .approved { background: var(--admin-green); }
-        .pending { background: #f59e0b; }
+        .login-card { background: var(--card); padding: 40px; border-radius: 24px; width: 100%; max-width: 360px; border: 1px solid #334155; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); text-align: center; }
+        
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); margin-bottom: 30px; letter-spacing: -1px; }
+        .logo span { color: var(--accent); }
 
-        /* Settle Controls */
-        .timer-lock { font-size: 2rem; text-align: center; color: #fbbf24; margin: 20px 0; }
-        .btn-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        .btn-settle { padding: 20px; border: none; border-radius: 8px; font-weight: bold; cursor: not-allowed; opacity: 0.3; }
-        .btn-active { cursor: pointer !important; opacity: 1 !important; background: #3b82f6; color: white; }
+        .tabs { display: flex; margin-bottom: 25px; border-bottom: 1px solid #334155; }
+        .tab { flex: 1; padding: 10px; cursor: pointer; color: #64748b; font-size: 0.9rem; font-weight: 600; }
+        .tab.active { color: var(--primary); border-bottom: 2px solid var(--primary); }
+
+        .input-group { text-align: left; margin-bottom: 20px; }
+        label { display: block; font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px; text-transform: uppercase; }
+        input { width: 100%; padding: 14px; background: #0f172a; border: 1px solid #334155; border-radius: 12px; color: white; box-sizing: border-box; font-size: 1rem; }
+        
+        .btn-action { width: 100%; padding: 16px; background: var(--primary); border: none; border-radius: 12px; color: white; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 10px; transition: 0.2s; }
+        .btn-action:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        #status-msg { margin-top: 20px; font-size: 0.85rem; padding: 10px; border-radius: 8px; display: none; }
+        .msg-error { background: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2); }
+        .msg-wait { background: rgba(245, 158, 11, 0.1); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.2); }
     </style>
 </head>
 <body>
 
-<h1>Admin Control Center</h1>
-
-<div class="grid">
-    <div class="panel">
-        <h3>User Approval Queue</h3>
-        <div id="userList">
-            <div class="user-row">
-                <span>Player_01</span>
-                <button onclick="approveUser(this)" class="status-badge pending">Approve</button>
-            </div>
-            <div class="user-row">
-                <span>Player_02</span>
-                <span class="status-badge approved">Approved</span>
-            </div>
-        </div>
+<div class="login-card">
+    <div class="logo">LOGIC<span>PRO</span></div>
+    
+    <div class="tabs">
+        <div id="tab-login" class="tab active" onclick="switchTab('login')">SIGN IN</div>
+        <div id="tab-reg" class="tab" onclick="switchTab('reg')">REGISTER</div>
     </div>
 
-    <div class="panel">
-        <h3>Live Round Control</h3>
-        <div id="activeBetsList">
-            <p style="color: #64748b;">Waiting for player bets...</p>
+    <form id="auth-form" onsubmit="handleAuth(event)">
+        <div class="input-group">
+            <label>Username</label>
+            <input type="text" id="username" required placeholder="Enter username">
         </div>
-        
-        <hr style="border-color: #334155; margin: 20px 0;">
-        
-        <div class="timer-lock" id="adminTimer">10:00</div>
-        
-        <div class="btn-grid">
-            <button class="btn-settle" id="s1" onclick="submitResult(1)">Result 1</button>
-            <button class="btn-settle" id="s2" onclick="submitResult(2)">Result 2</button>
-            <button class="btn-settle" id="s3" onclick="submitResult(3)">Result 3</button>
-            <button class="btn-settle" id="s4" onclick="submitResult(4)">Result 4</button>
+        <div class="input-group">
+            <label>Password</label>
+            <input type="password" id="password" required placeholder="••••••••">
         </div>
-        <p id="lockMessage" style="text-align:center; color: #ef4444; margin-top: 10px;">Buttons Locked until timer ends.</p>
-    </div>
+        <button type="submit" id="submit-btn" class="btn-action">SIGN IN</button>
+    </form>
+
+    <div id="status-msg"></div>
 </div>
 
 <script>
-    let timeLeft = 600; // 10 minutes
-    let canSettle = false;
+    let currentMode = 'login';
 
-    // Simulate the 10 minute lock
-    const countdown = setInterval(() => {
-        if (timeLeft <= 0) {
-            clearInterval(countdown);
-            unlockButtons();
+    function switchTab(mode) {
+        currentMode = mode;
+        document.getElementById('tab-login').classList.toggle('active', mode === 'login');
+        document.getElementById('tab-reg').classList.toggle('active', mode === 'reg');
+        document.getElementById('submit-btn').innerText = mode === 'login' ? 'SIGN IN' : 'CREATE ACCOUNT';
+        hideMsg();
+    }
+
+    function showMsg(text, type) {
+        const msg = document.getElementById('status-msg');
+        msg.innerText = text;
+        msg.className = type === 'error' ? 'msg-error' : 'msg-wait';
+        msg.style.display = 'block';
+    }
+
+    function hideMsg() { document.getElementById('status-msg').style.display = 'none'; }
+
+    function handleAuth(e) {
+        e.preventDefault();
+        const user = document.getElementById('username').value;
+        const pass = document.getElementById('password').value;
+
+        if (currentMode === 'reg') {
+            // SIMULATION: Save new user as "Pending Approval"
+            showMsg("Account created! Waiting for Admin approval.", "wait");
         } else {
-            timeLeft--;
-            let m = Math.floor(timeLeft / 60);
-            let s = timeLeft % 60;
-            document.getElementById('adminTimer').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+            // SIMULATION: Check Login
+            if (user === "admin" && pass === "1234") {
+                window.location.href = "admin.html"; // Redirect to your admin dashboard
+            } else {
+                // For regular customers, check if approved
+                showMsg("Checking approval status...", "wait");
+                setTimeout(() => {
+                    showMsg("Access Denied: Admin has not approved your account yet.", "error");
+                }, 1500);
+            }
         }
-    }, 1000);
-
-    function unlockButtons() {
-        canSettle = true;
-        document.getElementById('lockMessage').style.display = 'none';
-        document.querySelectorAll('.btn-settle').forEach(btn => btn.classList.add('btn-active'));
-    }
-
-    function approveUser(btn) {
-        btn.className = "status-badge approved";
-        btn.innerText = "Approved";
-        btn.onclick = null;
-    }
-
-    function submitResult(num) {
-        if(!canSettle) return alert("System is locked for 10 minutes!");
-        alert("Result " + num + " submitted. Payouts calculating for all users...");
-        // This is where we would trigger the calculation for ALL users in the database
     }
 </script>
 
