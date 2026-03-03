@@ -3,196 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Logic System Pro</title>
+    <title>Logic Master v3</title>
     <style>
-        :root { --bg: #0f172a; --card: #1e293b; --primary: #3b82f6; --text: #f8fafc; --accent: #fbbf24; --win: #10b981; --lose: #ef4444; }
-        body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; display: flex; flex-direction: column; align-items: center; padding: 15px; margin: 0; }
+        :root { --bg: #020617; --card: #1e293b; --primary: #3b82f6; --text: #f8fafc; --accent: #fbbf24; --win: #10b981; --lose: #ef4444; }
+        body { background: var(--bg); color: var(--text); font-family: sans-serif; padding: 15px; margin: 0; display: flex; flex-direction: column; align-items: center; }
         .container { width: 100%; max-width: 420px; }
-        
-        /* Dashboard */
-        .header-card { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 20px; border-radius: 20px; text-align: center; margin-bottom: 15px; border: 1px solid #334155; box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
-        .stat-label { font-size: 0.7rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 5px; }
-        #balance { font-size: 2.8rem; font-weight: 800; color: var(--accent); margin: 0; }
-        
-        /* Cards */
-        .card { background: var(--card); padding: 20px; border-radius: 18px; margin-bottom: 15px; border: 1px solid #334155; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
-        h2 { font-size: 1rem; color: var(--primary); margin-top: 0; margin-bottom: 15px; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
-        
-        /* Inputs & Buttons */
-        .input-group { margin-bottom: 15px; }
-        label { display: block; font-size: 0.75rem; color: #94a3b8; margin-bottom: 6px; font-weight: 600; }
-        input { width: 100%; padding: 14px; background: #0f172a; border: 1px solid #475569; border-radius: 12px; color: white; box-sizing: border-box; font-size: 1.1rem; outline: none; transition: border-color 0.2s; }
-        input:focus { border-color: var(--primary); }
-        .main-btn { width: 100%; padding: 18px; background: var(--primary); border: none; border-radius: 12px; color: white; font-weight: 800; cursor: pointer; font-size: 1.1rem; box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.39); }
-        
-        /* Timer Display */
-        #timer-display { font-size: 4rem; text-align: center; color: var(--accent); font-weight: 800; font-variant-numeric: tabular-nums; margin: 10px 0; text-shadow: 0 0 20px rgba(251, 191, 36, 0.3); }
-        
-        /* Admin Grid */
-        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-        .num-btn { padding: 20px; border-radius: 12px; border: 1px solid #475569; background: #1e293b; color: white; font-size: 1.5rem; font-weight: bold; cursor: pointer; }
-        .num-btn:active { background: var(--primary); }
-
-        /* History Table */
+        .wallet-section { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 30px 20px; border-radius: 24px; text-align: center; margin-bottom: 20px; border: 1px solid #334155; }
+        #balance { font-size: 3.5rem; font-weight: 900; color: var(--accent); margin: 0; }
+        .card { background: var(--card); padding: 22px; border-radius: 20px; margin-bottom: 18px; border: 1px solid #334155; }
+        .label { font-size: 0.7rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; display: block; }
+        input { width: 100%; padding: 16px; background: #0f172a; border: 1px solid #475569; border-radius: 12px; color: white; box-sizing: border-box; font-size: 1.2rem; font-weight: bold; margin-bottom: 15px; }
+        .btn-primary { width: 100%; padding: 18px; background: var(--primary); border: none; border-radius: 14px; color: white; font-weight: 800; cursor: pointer; font-size: 1.1rem; }
+        .admin-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .res-btn { padding: 22px; background: #334155; border: 1px solid #475569; border-radius: 14px; color: white; font-size: 1.5rem; font-weight: 900; }
+        #timer-box { font-size: 4.5rem; font-weight: 900; color: var(--accent); text-align: center; margin: 15px 0; }
         table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-        th { text-align: left; color: #94a3b8; padding-bottom: 10px; border-bottom: 1px solid #334155; }
+        th { text-align: left; color: #64748b; border-bottom: 1px solid #334155; padding-bottom: 10px; }
         td { padding: 12px 0; border-bottom: 1px solid #1e293b; }
-        .res-plus { color: var(--win); }
-        .res-minus { color: var(--lose); }
+        .win { color: var(--win); font-weight: bold; }
+        .lose { color: var(--lose); font-weight: bold; }
         .hidden { display: none; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header-card">
-        <div class="stat-label">System Wallet</div>
+    <div class="wallet-section">
+        <span class="label">Total Wallet</span>
         <div id="balance">1,000.00</div>
     </div>
 
     <div id="bet-area" class="card">
-        <h2>Place Player Bet</h2>
-        <div class="input-group">
-            <label>METHOD CODE</label>
-            <input type="number" id="methodInput" placeholder="e.g., 912, 11, -12">
-        </div>
-        <div class="input-group">
-            <label>BET AMOUNT (LUY)</label>
-            <input type="number" id="amountInput" placeholder="0.00">
-        </div>
-        <button class="main-btn" onclick="lockBet()">LOCK & START 10:00</button>
+        <label class="label">Method (K1, C1, T1, 1>2, -123)</label>
+        <input type="text" id="mCode" placeholder="Enter Code" style="text-transform: uppercase;">
+        <label class="label">Amount (Luy)</label>
+        <input type="number" id="mLuy" placeholder="0.00">
+        <button class="btn-primary" onclick="startRound()">START ROUND</button>
     </div>
 
     <div id="timer-area" class="card hidden">
-        <h2>Live Round Countdown</h2>
-        <div id="timer-display">10:00</div>
-        <p style="text-align: center; font-size: 0.8rem; color: #94a3b8;">Waiting for real-life result reveal...</p>
+        <div id="timer-box">10:00</div>
     </div>
 
-    <div id="admin-area" class="card">
-        <h2>Input Final Result</h2>
-        <div class="grid">
-            <button class="num-btn" onclick="settleGame(1)">1</button>
-            <button class="num-btn" onclick="settleGame(2)">2</button>
-            <button class="num-btn" onclick="settleGame(3)">3</button>
-            <button class="num-btn" onclick="settleGame(4)">4</button>
+    <div class="card">
+        <span class="label">Set Result</span>
+        <div class="admin-grid">
+            <button class="res-btn" onclick="settle(1)">1</button>
+            <button class="res-btn" onclick="settle(2)">2</button>
+            <button class="res-btn" onclick="settle(3)">3</button>
+            <button class="res-btn" onclick="settle(4)">4</button>
         </div>
     </div>
 
     <div class="card">
-        <h2>Recent Settled Bets</h2>
+        <span class="label">History</span>
         <table>
-            <thead>
-                <tr>
-                    <th>Method</th>
-                    <th>Bet</th>
-                    <th>Result</th>
-                </tr>
-            </thead>
-            <tbody id="history-body"></tbody>
+            <thead><tr><th>Code</th><th>Bet</th><th>Net</th></tr></thead>
+            <tbody id="logs"></tbody>
         </table>
     </div>
 </div>
 
 <script>
-    let currentBalance = 1000.00;
-    let activeBet = null;
+    let wallet = 1000.00;
+    let currentBet = null;
 
-    function lockBet() {
-        const m = document.getElementById('methodInput').value;
-        const a = parseFloat(document.getElementById('amountInput').value);
-
-        if(!m || isNaN(a) || a <= 0) return alert("Enter valid Method and Amount");
+    function startRound() {
+        const m = document.getElementById('mCode').value.toUpperCase().trim();
+        const l = parseFloat(document.getElementById('mLuy').value);
+        if(!m || isNaN(l) || l > wallet) return alert("Check Input or Balance");
         
-        // Save bet
-        activeBet = { method: parseInt(m), amount: a };
-        
-        // UI Change
+        wallet -= l;
+        updateUI();
+        currentBet = { method: m, luy: l };
         document.getElementById('bet-area').classList.add('hidden');
         document.getElementById('timer-area').classList.remove('hidden');
-        
-        startTimer(600);
+        runClock(600);
     }
 
-    function startTimer(duration) {
-        let timer = duration, minutes, seconds;
-        const display = document.getElementById('timer-display');
-        const interval = setInterval(function () {
-            minutes = parseInt(timer / 60, 10);
-            seconds = parseInt(timer % 60, 10);
-            display.textContent = minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
-
-            if (--timer < 0) {
-                clearInterval(interval);
-                display.textContent = "READY";
-            }
+    function runClock(s) {
+        const box = document.getElementById('timer-box');
+        let t = s;
+        const timer = setInterval(() => {
+            let m = Math.floor(t / 60); let secs = t % 60;
+            box.innerText = `${m}:${secs < 10 ? '0' : ''}${secs}`;
+            if (--t < 0) { clearInterval(timer); box.innerText = "READY"; }
         }, 1000);
     }
 
-    function settleGame(result) {
-        if(!activeBet) return alert("Please place a bet first!");
-
-        // Run your VBA logic
-        const netProfit = runVBALogic(result, activeBet.method, activeBet.amount);
-        
-        // Update Balance
-        currentBalance += netProfit;
-        document.getElementById('balance').textContent = currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2});
-
-        // Update History
-        const tbody = document.getElementById('history-body');
-        const row = `<tr>
-            <td>${activeBet.method}</td>
-            <td>${activeBet.amount}</td>
-            <td class="${netProfit >= 0 ? 'res-plus' : 'res-minus'}">${netProfit >= 0 ? '+' : ''}${netProfit.toFixed(2)}</td>
-        </tr>`;
-        tbody.insertAdjacentHTML('afterbegin', row);
-
-        // Reset App
-        activeBet = null;
+    function settle(res) {
+        if(!currentBet) return alert("No bet");
+        const profit = calculateAA(res, currentBet.method, currentBet.luy);
+        if (profit > 0) wallet += (currentBet.luy + profit);
+        else if (profit === 0) wallet += currentBet.luy;
+        updateUI();
+        addLog(currentBet.method, currentBet.luy, profit);
+        currentBet = null;
         document.getElementById('bet-area').classList.remove('hidden');
         document.getElementById('timer-area').classList.add('hidden');
-        document.getElementById('methodInput').value = "";
-        document.getElementById('amountInput').value = "";
-        document.getElementById('timer-display').textContent = "10:00";
     }
 
-    // --- YOUR VBA LOGIC CONVERTED TO JAVASCRIPT ---
-    function runVBALogic(Result, Method, Luy) {
-        let m = parseInt(Method), am = Math.abs(m), res = parseInt(Result);
-        
-        // Same-Parity
-        if (m === 11) return res === 1 ? Luy * 0.95 : (res === 3 ? -Luy : 0);
-        if (m === 22) return res === 2 ? Luy * 0.95 : (res === 4 ? -Luy : 0);
-        if (m === 33) return res === 3 ? Luy * 0.95 : (res === 1 ? -Luy : 0);
-        if (m === 44) return res === 4 ? Luy * 0.95 : (res === 2 ? -Luy : 0);
+    function updateUI() { document.getElementById('balance').innerText = wallet.toLocaleString(undefined,{minimumFractionDigits:2}); }
+    
+    function addLog(m, l, p) {
+        const row = `<tr><td>${m}</td><td>${l}</td><td class="${p>0?'win':(p<0?'lose':'')}">${p>0?'+':''}${p.toFixed(2)}</td></tr>`;
+        document.getElementById('logs').insertAdjacentHTML('afterbegin', row);
+    }
 
-        // Fixed Singles
-        const fixed = [[1,1,2.85,-1],[2,2,2.85,-1],[3,3,2.85,-1],[4,4,2.85,-1],[-1,1,-3,0.95],[-2,2,-3,0.95],[-3,3,-3,0.95],[-4,4,-3,0.95]];
-        for(let r of fixed) if(m === r[0]) return res === r[1] ? Luy * r[2] : Luy * r[3];
-
-        // 900s Ordered Pairs
-        if (m >= 900 && m <= 999) {
-            let d1 = Math.floor((m - 900) / 10), d2 = (m - 900) % 10;
-            return res === d1 ? Luy * 1.9 : (res === d2 ? 0 : -Luy);
+    function calculateAA(Result, M, Luy) {
+        // Translation Logic
+        if (M.startsWith('K')) { // K1, K2... (Positive 1, 2...)
+            let n = parseInt(M.substring(1));
+            return Result === n ? Luy * 2.85 : -Luy;
         }
-
-        // Negative Triples
-        if (m < 0 && am >= 100) {
-            let s = am.toString();
-            if (res == s[0]) return -Luy;
-            if (res == s[1] || res == s[2]) return (Luy / 2) * 0.95;
+        if (M.startsWith('C')) { // C1, C2... (Negative -1, -2...)
+            let n = parseInt(M.substring(1));
+            return Result === n ? -Luy * 3 : Luy * 0.95;
+        }
+        if (M.startsWith('T')) { // T1, T2... (11, 22...)
+            let n = parseInt(M.substring(1));
+            if (n === 1) return Result === 1 ? Luy * 0.95 : (Result === 3 ? -Luy : 0);
+            if (n === 2) return Result === 2 ? Luy * 0.95 : (Result === 4 ? -Luy : 0);
+            if (n === 3) return Result === 3 ? Luy * 0.95 : (Result === 1 ? -Luy : 0);
+            if (n === 4) return Result === 4 ? Luy * 0.95 : (Result === 2 ? -Luy : 0);
+        }
+        if (M.includes('>')) { // 1>2, 2>3...
+            let parts = M.split('>');
+            let d1 = parseInt(parts[0]), d2 = parseInt(parts[1]);
+            return Result === d1 ? Luy * 1.9 : (Result === d2 ? 0 : -Luy);
+        }
+        if (M.startsWith('-') && M.length > 2) { // -123 (Negative Triples)
+            let s = M.substring(1);
+            if (Result == s[0]) return -Luy;
+            if (Result == s[1] || Result == s[2]) return (Luy/2)*0.95;
             return 0;
         }
-
-        // Pairs (12, -12)
-        let d1 = Math.floor(am / 10), d2 = am % 10;
-        if (m < 0 && am >= 10) return res === d1 ? -Luy : (res === d2 ? Luy * 0.95 : 0);
-        if (m > 0 && am >= 10) return (res === d1 || res === d2) ? Luy * 0.95 : -Luy;
-
+        // Handle Pairs (e.g. 12 or -12)
+        let isNeg = M.startsWith('-');
+        let val = isNeg ? Math.abs(parseInt(M)) : parseInt(M);
+        if (val >= 10 && val <= 99) {
+            let d1 = Math.floor(val/10), d2 = val%10;
+            if (isNeg) return Result === d1 ? -Luy : (Result === d2 ? Luy*0.95 : 0);
+            return (Result === d1 || Result === d2) ? Luy*0.95 : -Luy;
+        }
         return 0;
     }
 </script>
-
 </body>
 </html>
